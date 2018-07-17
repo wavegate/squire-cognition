@@ -6,12 +6,15 @@
     <script type="text/javascript" src="{{ url_for('static', filename='jspsych-6.0.4/plugins/jspsych-html-keyboard-response.js') }}"></script>
     <script type="text/javascript" src="{{ url_for('static', filename='jspsych-6.0.4/plugins/jspsych-image-keyboard-response.js') }}"></script>
     <link href={{ url_for('static', filename='jspsych-6.0.4/css/jspsych.css') }} rel="stylesheet" type="text/css"></link>
+    <script type="text/javascript" src="{{ url_for('static', filename='jquery.min.js') }}"></script>
   </head>
   <body></body>
   <script>
 
     /* create timeline */
     var timeline = [];
+
+    var returndata;
 
     /* define welcome message trial */
     var welcome = {
@@ -84,7 +87,7 @@
         var correct_trials = trials.filter({correct: true});
         var accuracy = Math.round(correct_trials.count() / trials.count() * 100);
         var rt = Math.round(correct_trials.select('rt').mean());
-
+        returndata = rt;
         return "<p>You responded correctly on "+accuracy+"% of the trials.</p>"+
         "<p>Your average response time was "+rt+"ms.</p>"+
         "<p>Press any key to complete the experiment. Thank you!</p>";
@@ -97,7 +100,9 @@
     jsPsych.init({
       timeline: timeline,
       on_finish: function() {
-        jsPsych.data.displayData();
+        $.post( "/postmethod", { javascript_data: returndata }, function(data) {
+          window.location.href = '/'
+        });
       }
     });
   </script>

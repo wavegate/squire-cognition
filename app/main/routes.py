@@ -152,5 +152,14 @@ def dottest():
                            form=form)
 
 @bp.route('/experiment')
+@login_required
 def experiment():
     return render_template('experiment.html', title=_('Experiment'))
+
+@bp.route('/postmethod', methods = ['POST'])
+def get_post_javascript_data():
+    jsdata = request.form['javascript_data']
+    test = Test(testname='dottest', score=jsdata, author=current_user)
+    db.session.add(test)
+    db.session.commit()
+    return jsdata

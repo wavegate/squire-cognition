@@ -14,7 +14,7 @@
                 {{ _('%(username)s scored %(when)s',
                     username=user_link, when=moment(test.timestamp).fromNow()) }}
                 <br>
-                <span id="test{{ test.id }}">{{ test.testname }}: {{ test.score }}</span>
+                <span id="test{{ test.id }}">{{ test.testname }}: {{ test.score }} ms</span>
                 {% if test.language and test.language != g.locale %}
                 <br><br>
                 <span id="translation{{ test.id }}">
