@@ -114,6 +114,14 @@ def unfollow(username):
     flash(_('You are not following %(username)s.', username=username))
     return redirect(url_for('main.user', username=username))
 
+@bp.route('/delete_test/<int:test_id>')
+@login_required
+def delete_test(test_id):
+    test = Test.query.get(test_id)
+    if test.author == current_user:
+        db.session.delete(test)
+        db.session.commit()
+    return redirect(request.referrer or url_for('main.index'))
 
 @bp.route('/translate', methods=['POST'])
 @login_required
@@ -138,23 +146,15 @@ def search():
     return render_template('search.html', title=_('Search'), tests=tests,
                            next_url=next_url, prev_url=prev_url)
 
-@bp.route('/dottest', methods=['GET', 'POST'])
+@bp.route('/tests')
 @login_required
-def dottest():
-    form = DottestForm()
-    if form.validate_on_submit():
-        test = Test(testname='dottest', score=form.score.data, author=current_user)
-        db.session.add(test)
-        db.session.commit()
-        flash(_('Test score added!'))
-        return redirect(url_for('main.index'))
-    return render_template('dottest.html', title=_('Dot Test'),
-                           form=form)
+def tests():
+    return render_template('tests.html', title=_('Tests'))
 
-@bp.route('/experiment')
+@bp.route('/tests/example')
 @login_required
-def experiment():
-    return render_template('experiment.html', title=_('Experiment'))
+def example_experiment():
+    return render_template('tests/example.html', title=_('Example Experiment'))
 
 @bp.route('/postmethod', methods = ['POST'])
 def get_post_javascript_data():
