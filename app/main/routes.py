@@ -150,3 +150,7 @@ def dottest():
         return redirect(url_for('main.index'))
     return render_template('dottest.html', title=_('Dot Test'),
                            form=form)
+
+@bp.route('/experiment')
+def experiment():
+    return render_template('experiment.html', title=_('Experiment'))
