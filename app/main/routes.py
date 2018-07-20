@@ -9,6 +9,7 @@ from app.main.forms import EditProfileForm, PostForm, SearchForm, DottestForm
 from app.models import User, Test
 from app.translate import translate
 from app.main import bp
+import sys
 
 
 @bp.before_app_request
@@ -156,10 +157,29 @@ def tests():
 def example_experiment():
     return render_template('tests/example.html', title=_('Example Experiment'))
 
+@bp.route('/tests/magicseven')
+@login_required
+def magicseven():
+    return render_template('tests/magicseven.html', title=_('Magic Number Seven'))
+
+@bp.route('/tests/subitizing')
+@login_required
+def subitizing():
+    return render_template('tests/subitizing.html', title=_('Subitizing'))
+
+@bp.route('/tests/subitizing_run')
+@login_required
+def subitizing_run():
+    return render_template('tests/subitizing_run.html', title=_('Subitizing - Run'))
+
 @bp.route('/postmethod', methods = ['POST'])
 def get_post_javascript_data():
     jsdata = request.form['javascript_data']
-    test = Test(testname='dottest', score=jsdata, author=current_user)
+    test_name = request.form['test_name']
+    #print(jsdata, file=sys.stderr)
+    #with open('somefile.txt', 'a') as the_file:
+    #    the_file.write(jsdata)
+    test = Test(testname=test_name, score=jsdata, author=current_user)
     db.session.add(test)
     db.session.commit()
     return jsdata

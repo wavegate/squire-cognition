@@ -1,10 +1,11 @@
 <!DOCTYPE html>
 <html>
   <head>
-    <title>My experiment</title>
+    <title>Subitizing   </title>
     <script type="text/javascript" src="{{ url_for('static', filename='jspsych-6.0.4/jspsych.js') }}"></script>
     <script type="text/javascript" src="{{ url_for('static', filename='jspsych-6.0.4/plugins/jspsych-html-keyboard-response.js') }}"></script>
     <script type="text/javascript" src="{{ url_for('static', filename='jspsych-6.0.4/plugins/jspsych-image-keyboard-response.js') }}"></script>
+    <script type="text/javascript" src="{{ url_for('static', filename='jspsych-6.0.4/plugins/jspsych-image-slider-response.js') }}"></script>
     <link href={{ url_for('static', filename='jspsych-6.0.4/css/jspsych.css') }} rel="stylesheet" type="text/css"></link>
     <script type="text/javascript" src="{{ url_for('static', filename='jquery.min.js') }}"></script>
   </head>
@@ -45,8 +46,16 @@
     /* test trials */
 
     var test_stimuli = [
-      { stimulus: "{{ url_for('static', filename='img/blue.png') }}", data: { test_part: 'test', correct_response: 'f' } },
-      { stimulus: "{{ url_for('static', filename='img/orange.png') }}", data: { test_part: 'test', correct_response: 'j' } }
+      { stimulus: "{{ url_for('static', filename='0.png') }}", data: { test_part: 'test', correct_response: '1' } },
+      { stimulus: "{{ url_for('static', filename='1.png') }}", data: { test_part: 'test', correct_response: '8' } },
+      { stimulus: "{{ url_for('static', filename='2.png') }}", data: { test_part: 'test', correct_response: '6' } },
+      { stimulus: "{{ url_for('static', filename='3.png') }}", data: { test_part: 'test', correct_response: '3' } },
+      { stimulus: "{{ url_for('static', filename='4.png') }}", data: { test_part: 'test', correct_response: '4' } },
+      { stimulus: "{{ url_for('static', filename='5.png') }}", data: { test_part: 'test', correct_response: '1' } },
+      { stimulus: "{{ url_for('static', filename='6.png') }}", data: { test_part: 'test', correct_response: '7' } },
+      { stimulus: "{{ url_for('static', filename='7.png') }}", data: { test_part: 'test', correct_response: '2' } },
+      { stimulus: "{{ url_for('static', filename='8.png') }}", data: { test_part: 'test', correct_response: '8' } },
+      { stimulus: "{{ url_for('static', filename='9.png') }}", data: { test_part: 'test', correct_response: '9' } }
     ];
 
     var fixation = {
@@ -54,7 +63,7 @@
       stimulus: '<div style="font-size:60px;">+</div>',
       choices: jsPsych.NO_KEYS,
       trial_duration: function(){
-        return jsPsych.randomization.sampleWithoutReplacement([250, 500, 750, 1000, 1250, 1500, 1750, 2000], 1)[0];
+        return jsPsych.randomization.sampleWithoutReplacement([750, 1000, 1250], 1)[0];
       },
       data: {test_part: 'fixation'}
     }
@@ -62,7 +71,10 @@
     var test = {
       type: "image-keyboard-response",
       stimulus: jsPsych.timelineVariable('stimulus'),
-      choices: ['f', 'j'],
+      choices: ['1', '2', '3', '4', '5', '6', '7', '8', '9'],
+      stimulus_duration: 200,
+      trial_duration: 5000,
+      response_ends_trial: false,
       data: jsPsych.timelineVariable('data'),
       on_finish: function(data){
         data.correct = data.key_press == jsPsych.pluginAPI.convertKeyCharacterToKeyCode(data.correct_response);
@@ -87,7 +99,7 @@
         var correct_trials = trials.filter({correct: true});
         var accuracy = Math.round(correct_trials.count() / trials.count() * 100);
         var rt = Math.round(correct_trials.select('rt').mean());
-        returndata = rt;
+        returndata = accuracy;
         return "<p>You responded correctly on "+accuracy+"% of the trials.</p>"+
         "<p>Your average response time was "+rt+"ms.</p>"+
         "<p>Press any key to complete the experiment. Thank you!</p>";
@@ -100,8 +112,9 @@
     jsPsych.init({
       timeline: timeline,
       on_finish: function() {
-        $.post( "/postmethod", { javascript_data: jsPsych.data.get().json(), test_name: 'Dot Test' }, function(data) {
-          window.location.href = '/'
+
+        $.post( "/postmethod", { javascript_data: returndata, test_name: 'Subitizing' }, function(data) {
+          window.location.href="/";
         });
       }
     });

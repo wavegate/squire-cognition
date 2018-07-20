@@ -1,0 +1,8 @@
+{% extends "base.html" %}
+
+{% block app_content %}
+    <h1>{{ _('Magic Number Seven') }}</h1>
+    <p>"The Magical Number Seven, Plus or Minus Two: Some Limits on Our Capacity for Processing Information"[1] is one of the most highly cited papers in psychology.[2][3][4] It was published in 1956 in Psychological Review by the cognitive psychologist George A. Miller of Princeton University's Department of Psychology. It is often interpreted to argue that the number of objects an average human can hold in working memory is 7 ± 2. This is frequently referred to as Miller's law.</p>
+    <a href="{{ url_for('static', filename='papers/magicseven_miller_1955.pdf') }}">Paper</a>
+    <button>Take Test</button>
+{% endblock %}
