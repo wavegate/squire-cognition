@@ -9,7 +9,13 @@ from app.main.forms import EditProfileForm, PostForm, SearchForm, DottestForm
 from app.models import User, Test
 from app.translate import translate
 from app.main import bp
+from app.subitizing import generate_images
+from app.nocache import nocache
+import matplotlib.pyplot as plt
+import numpy as np 
 import sys
+import json
+import os
 
 
 @bp.before_app_request
@@ -171,6 +177,35 @@ def subitizing():
 @login_required
 def subitizing_run():
     return render_template('tests/subitizing_run.html', title=_('Subitizing - Run'))
+
+@bp.route('/generate_images')
+def generate_images():
+    sequence = []
+    for i in range(10):
+        N = np.random.random_integers(1,9)
+        x = np.random.rand(N)
+        y = np.random.rand(N)
+        new_dict = {}
+        new_dict[str(i)] = str(N)
+
+        colors = 'k'
+        area = 20
+
+        plt.scatter(x, y, s=area, c=colors)
+        plt.axis([0, 1, 0, 1])
+        plt.axis('scaled')
+
+        plt.axis('off')
+        loc = 'img/subitizing/{}.png'.format(np.random.random_integers(10000000,90000000))
+        loc2 = 'app/static/' + loc
+        new_dict['loc'] = loc
+        if os.path.isfile(loc2):
+            os.remove(loc2)
+
+        plt.savefig(loc2)
+        sequence.append(new_dict)
+        plt.clf()
+    return json.dumps(sequence)
 
 @bp.route('/postmethod', methods = ['POST'])
 def get_post_javascript_data():

@@ -43,20 +43,40 @@
     };
     timeline.push(instructions);
 
-    /* test trials */
+    var correct_answers;
+    var test_stimuli = [];
+    var images = [];
 
-    var test_stimuli = [
-      { stimulus: "{{ url_for('static', filename='0.png') }}", data: { test_part: 'test', correct_response: '1' } },
-      { stimulus: "{{ url_for('static', filename='1.png') }}", data: { test_part: 'test', correct_response: '8' } },
-      { stimulus: "{{ url_for('static', filename='2.png') }}", data: { test_part: 'test', correct_response: '6' } },
-      { stimulus: "{{ url_for('static', filename='3.png') }}", data: { test_part: 'test', correct_response: '3' } },
-      { stimulus: "{{ url_for('static', filename='4.png') }}", data: { test_part: 'test', correct_response: '4' } },
-      { stimulus: "{{ url_for('static', filename='5.png') }}", data: { test_part: 'test', correct_response: '1' } },
-      { stimulus: "{{ url_for('static', filename='6.png') }}", data: { test_part: 'test', correct_response: '7' } },
-      { stimulus: "{{ url_for('static', filename='7.png') }}", data: { test_part: 'test', correct_response: '2' } },
-      { stimulus: "{{ url_for('static', filename='8.png') }}", data: { test_part: 'test', correct_response: '8' } },
-      { stimulus: "{{ url_for('static', filename='9.png') }}", data: { test_part: 'test', correct_response: '9' } }
-    ];
+    function define_stimuli(result2){
+      /*var i = 0;
+      for (i = 0; i < result2.length(); i++) {
+        test_stimuli.push({ stimulus: "{{ url_for('static', filename='img/subitizing/.png') }}", data: { test_part: 'test', correct_response: result2['0'] } })
+      }*/
+      images.push("{{ url_for('static', filename='CODE') }}".replace("CODE",result2[0]['loc']))
+      test_stimuli = [
+      { stimulus: "{{ url_for('static', filename='CODE') }}".replace("CODE",result2[0]['loc']), data: { test_part: 'test', correct_response: result2[0]['0'] } }
+      ];
+      console.log(test_stimuli);
+      return test_stimuli;
+    };
+
+    function assign_stimuli(result3){
+      var test_procedure = {
+        timeline: [fixation, test],
+        timeline_variables: test_stimuli,
+        repetitions: 1,
+        randomize_order: true
+      }
+      timeline.push(test_procedure);
+      return('resolved')
+    }
+
+    $.get("/generate_images")
+    .then(result => $.parseJSON(result))
+    .then(result2 => define_stimuli(result2))
+    .then(result3 => assign_stimuli(result3))
+    .then(result4 => debrief(result4))
+    .then(result5 => init(result5))
 
     var fixation = {
       type: 'html-keyboard-response',
@@ -73,7 +93,7 @@
       stimulus: jsPsych.timelineVariable('stimulus'),
       choices: ['1', '2', '3', '4', '5', '6', '7', '8', '9'],
       stimulus_duration: 200,
-      trial_duration: 5000,
+      trial_duration: 2000,
       response_ends_trial: false,
       data: jsPsych.timelineVariable('data'),
       on_finish: function(data){
@@ -81,36 +101,41 @@
       },
     }
 
-    var test_procedure = {
-      timeline: [fixation, test],
-      timeline_variables: test_stimuli,
-      repetitions: 1,
-      randomize_order: true
-    }
-    timeline.push(test_procedure);
+    //var test_procedure = {
+    //  timeline: [fixation, test],
+    //  timeline_variables: test_stimuli,
+    //  repetitions: 1,
+    //  randomize_order: true
+    //}
+    //console.log(test_procedure)
+    //timeline.push(test_procedure);
 
     /* define debrief */
+    function debrief(result4) {
+      var debrief_block = {
+        type: "html-keyboard-response",
+        stimulus: function() {
 
-    var debrief_block = {
-      type: "html-keyboard-response",
-      stimulus: function() {
+          var trials = jsPsych.data.get().filter({test_part: 'test'});
+          var correct_trials = trials.filter({correct: true});
+          var accuracy = Math.round(correct_trials.count() / trials.count() * 100);
+          var rt = Math.round(correct_trials.select('rt').mean());
+          returndata = accuracy;
+          return "<p>You responded correctly on "+accuracy+"% of the trials.</p>"+
+          "<p>Your average response time was "+rt+"ms.</p>"+
+          "<p>Press any key to complete the experiment. Thank you!</p>";
 
-        var trials = jsPsych.data.get().filter({test_part: 'test'});
-        var correct_trials = trials.filter({correct: true});
-        var accuracy = Math.round(correct_trials.count() / trials.count() * 100);
-        var rt = Math.round(correct_trials.select('rt').mean());
-        returndata = accuracy;
-        return "<p>You responded correctly on "+accuracy+"% of the trials.</p>"+
-        "<p>Your average response time was "+rt+"ms.</p>"+
-        "<p>Press any key to complete the experiment. Thank you!</p>";
-
-      }
-    };
-    timeline.push(debrief_block);
+        }
+      };
+      timeline.push(debrief_block);
+      return("resolved")
+    }
 
     /* start the experiment */
-    jsPsych.init({
+    function init(result5){
+      jsPsych.init({
       timeline: timeline,
+      preload_images: images,
       on_finish: function() {
 
         $.post( "/postmethod", { javascript_data: returndata, test_name: 'Subitizing' }, function(data) {
@@ -118,5 +143,6 @@
         });
       }
     });
+    }
   </script>
 </html>
