@@ -1,0 +1,18 @@
+{% extends "base.html" %}
+
+{% block app_content %}
+    <h1>{{ test.testname }}</h1>
+    <h3>completed by {{ test.author.username }}</h3>
+    <ul>
+        <li>average reaction time for correct trials: {{ test.reaction_time }} ms</li>
+        <li>accuracy: {{ test.accuracy }}%</li>
+    </ul>
+    average across all users:
+    highest score:
+    best personal score:
+    score history:
+    back
+    {% if test.author == current_user %}
+                <br><a href="{{ url_for('main.delete_test', test_id=test.id) }}">Remove score</a>
+                {% endif %}
+{% endblock %}

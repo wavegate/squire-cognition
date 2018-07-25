@@ -131,6 +131,8 @@ class Test(SearchableMixin, db.Model):
     id = db.Column(db.Integer, primary_key=True)
     testname = db.Column(db.String(140))
     score = db.Column(db.String(140))
+    accuracy = db.Column(db.String(140))
+    reaction_time = db.Column(db.String(140))
     timestamp = db.Column(db.DateTime, index=True, default=datetime.utcnow)
     user_id = db.Column(db.Integer, db.ForeignKey('user.id'))
     language = db.Column(db.String(5))
