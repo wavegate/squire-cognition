@@ -16,6 +16,7 @@ import numpy as np
 import sys
 import json
 import os
+import glob
 
 
 @bp.before_app_request
@@ -72,6 +73,11 @@ def user(username):
     return render_template('user.html', user=user, tests=tests.items,
                            next_url=next_url, prev_url=prev_url)
 
+@bp.route('/test/<test_id>')
+@login_required
+def test(test_id):
+    test = Test.query.filter_by(id=test_id).first_or_404()
+    return render_template('testinfo.html', test=test)
 
 @bp.route('/edit_profile', methods=['GET', 'POST'])
 @login_required
@@ -186,7 +192,7 @@ def generate_images():
         x = np.random.rand(N)
         y = np.random.rand(N)
         new_dict = {}
-        new_dict[str(i)] = str(N)
+        new_dict['index'] = str(N)
 
         colors = 'k'
         area = 20
@@ -209,12 +215,17 @@ def generate_images():
 
 @bp.route('/postmethod', methods = ['POST'])
 def get_post_javascript_data():
-    jsdata = request.form['javascript_data']
+    score = request.form['score']
     test_name = request.form['test_name']
+    accuracy = request.form['accuracy']
+    reaction_time = request.form['reaction_time']
     #print(jsdata, file=sys.stderr)
     #with open('somefile.txt', 'a') as the_file:
     #    the_file.write(jsdata)
-    test = Test(testname=test_name, score=jsdata, author=current_user)
+    files = glob.glob('app/static/img/subitizing/*') #remove subitizing images, must change once more tests added
+    for f in files:
+        os.remove(f)
+    test = Test(testname=test_name, score=score, reaction_time=reaction_time, accuracy=accuracy, author=current_user)
     db.session.add(test)
     db.session.commit()
-    return jsdata
+    return 'resolved'

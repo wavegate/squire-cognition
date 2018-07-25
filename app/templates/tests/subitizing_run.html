@@ -15,7 +15,9 @@
     /* create timeline */
     var timeline = [];
 
-    var returndata;
+    var score;
+    var rt;
+    var accuracy;
 
     /* define welcome message trial */
     var welcome = {
@@ -52,11 +54,16 @@
       for (i = 0; i < result2.length(); i++) {
         test_stimuli.push({ stimulus: "{{ url_for('static', filename='img/subitizing/.png') }}", data: { test_part: 'test', correct_response: result2['0'] } })
       }*/
-      images.push("{{ url_for('static', filename='CODE') }}".replace("CODE",result2[0]['loc']))
+      for (i = 0; i < result2.length; i++) {
+        images.push("{{ url_for('static', filename='CODE') }}".replace("CODE",result2[i]['loc']))
+        test_stimuli.push(
+        { stimulus: "{{ url_for('static', filename='CODE') }}".replace("CODE",result2[i]['loc']), data: { test_part: 'test', correct_response: result2[i]['index'] } }
+        );
+      }
+      /*images.push("{{ url_for('static', filename='CODE') }}".replace("CODE",result2[0]['loc']))
       test_stimuli = [
       { stimulus: "{{ url_for('static', filename='CODE') }}".replace("CODE",result2[0]['loc']), data: { test_part: 'test', correct_response: result2[0]['0'] } }
-      ];
-      console.log(test_stimuli);
+      ];*/
       return test_stimuli;
     };
 
@@ -118,9 +125,9 @@
 
           var trials = jsPsych.data.get().filter({test_part: 'test'});
           var correct_trials = trials.filter({correct: true});
-          var accuracy = Math.round(correct_trials.count() / trials.count() * 100);
-          var rt = Math.round(correct_trials.select('rt').mean());
-          returndata = accuracy;
+          accuracy = Math.round(correct_trials.count() / trials.count() * 100);
+          rt = Math.round(correct_trials.select('rt').mean());
+          score = accuracy;
           return "<p>You responded correctly on "+accuracy+"% of the trials.</p>"+
           "<p>Your average response time was "+rt+"ms.</p>"+
           "<p>Press any key to complete the experiment. Thank you!</p>";
@@ -138,7 +145,7 @@
       preload_images: images,
       on_finish: function() {
 
-        $.post( "/postmethod", { javascript_data: returndata, test_name: 'Subitizing' }, function(data) {
+        $.post( "/postmethod", { score: score, accuracy: accuracy, reaction_time: rt, test_name: 'Subitizing' }, function(data) {
           window.location.href="/";
         });
       }
