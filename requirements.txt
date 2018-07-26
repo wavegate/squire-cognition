@@ -54,7 +54,6 @@ pipenv==2018.5.18
 plotly==2.7.0
 psycopg2==2.7.3.1
 pushbullet.py==0.11.0
-PyAutoGUI==0.9.36
 pycurl==7.43.0.1
 pyee==5.0.0
 pygame==1.9.3
