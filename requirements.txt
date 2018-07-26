@@ -89,7 +89,6 @@ w3lib==1.19.0
 websocket-client==0.48.0
 websockets==4.0.1
 Werkzeug==0.12.2
-win32gui==221.6
 WTForms==2.1
 
 # requirements for Heroku
