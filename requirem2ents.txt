@@ -13,7 +13,7 @@ configobj==5.0.6
 cssselect==1.0.3
 cycler==0.10.0
 decorator==4.3.0
-Django==2.0.5
+Django==2.2.24
 dominate==2.3.1
 elasticsearch==6.1.1
 fake-useragent==0.1.10
