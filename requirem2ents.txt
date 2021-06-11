@@ -87,7 +87,7 @@ virtualenv-clone==0.3.0
 visitor==0.1.3
 w3lib==1.19.0
 websocket-client==0.48.0
-websockets==4.0.1
+websockets==9.1
 Werkzeug==0.12.2
 WTForms==2.1
 
