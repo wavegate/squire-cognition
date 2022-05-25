@@ -57,7 +57,7 @@ pushbullet.py==0.11.0
 pycurl==7.43.0.1
 pyee==5.0.0
 pygame==1.9.3
-PyJWT==1.5.3
+PyJWT==2.4.0
 PyMsgBox==1.0.6
 pyparsing==2.2.0
 pyperclip==1.6.0
