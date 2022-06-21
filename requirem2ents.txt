@@ -45,7 +45,7 @@ Mako==1.0.7
 MarkupSafe==1.0
 matplotlib==2.2.2
 nbformat==4.4.0
-numpy==1.14.4
+numpy==1.22.0
 opencv-python==3.4.1.15
 pandas==0.23.1
 parse==1.8.2
